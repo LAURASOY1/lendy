@@ -1,7 +1,16 @@
 //***********************using shared library*************************
-@Library('lendy-shared-lib') _
+@Library('lendy-shared-lib@main') _  
 
-lendyPipeline(
-    dockerComposeFile: 'docker-compose.yml',
-    testCommand: 'python manage.py test loan_app'
-)
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                lendyPipeline(
+                    dockerComposeFile: 'docker-compose.yml',
+                    testCommand: 'python manage.py test loan_app'
+                )
+            }
+        }
+    }
+}
