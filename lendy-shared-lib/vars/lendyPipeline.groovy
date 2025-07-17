@@ -1,4 +1,3 @@
-
 def call(Map config = [:]) {
     pipeline {
         agent any
@@ -15,15 +14,7 @@ def call(Map config = [:]) {
             }
             stage('Test') {
                 steps {
-                    sh 'python manage.py test'
-                }
-            }
-            stage('Deploy') {
-                when {
-                    branch 'main'
-                }
-                steps {
-                    sh 'docker-compose up -d'
+                    sh 'python manage.py test loan_app'
                 }
             }
         }

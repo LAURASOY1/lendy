@@ -1,7 +1,17 @@
-//***********************using shared library*************************
-@Library('lendy-shared-lib') _
+def lib = load 'lendy-shared-lib/vars/lendyPipeline.groovy'
 
-lendyPipeline(
-    dockerComposeFile: 'docker-compose.yml',
-    testCommand: 'python manage.py test loan_app'
-)
+pipeline {
+    agent any
+    stages {
+        stage('Run Pipeline') {
+            steps {
+                script {
+                    lib.call(
+                        dockerComposeFile: 'docker-compose.yml',
+                        testCommand: 'python manage.py test loan_app'
+                    )
+                }
+            }
+        }
+    }
+}
