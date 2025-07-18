@@ -1,6 +1,6 @@
 // lendy-shared-lib/vars/lendyPipeline.groovy
 def call(Map config = [:]) {
-    // Remove the pipeline block and steps{} wrappers
+    // Simple stage definitions without pipeline/steps blocks
     stage('Checkout') {
         checkout scm
     }
