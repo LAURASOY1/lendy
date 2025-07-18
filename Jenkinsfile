@@ -1,37 +1,27 @@
-//***********************using shared library*************************
-@Library('lendy-shared-lib@main') _
+Library('lendy-shared-lib@main') _
 
 pipeline {
     agent any
     stages {
-        stage('Execute Pipeline') {
+        stage('Checkout & Setup .env') {
             steps {
-                script {
-                    lendyPipeline(
-                        dockerComposeFile: 'docker-compose.yml',
-                        testCommand: 'python manage.py test loan_app',
-                        preBuildSteps: {
-                            stage('Setup Environment') {
-                                steps {
-                                    withCredentials([file(credentialsId: 'prod-env-file', variable: 'ENV_FILE')]) {
-                                        sh '''
-                                            cp $ENV_FILE .env
-                                            # Ensure proper permissions
-                                            chmod 600 .env
-                                        '''
-                                    }
-                                }
-                            }
-                        },
-                        buildSteps: {
-                            stage('Build') {
-                                steps {
-                                    sh 'docker-compose -f docker-compose.yml build'
-                                }
-                            }
-                        }
-                    )
+                checkout scm
+                withCredentials([file(credentialsId: 'prod-env-file', variable: 'ENV_FILE')]) {
+                    sh '''
+                        cp $ENV_FILE .env
+                        chmod 600 .env
+                    '''
                 }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'docker-compose -f docker-compose.yml build'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'python manage.py test loan_app'
             }
         }
     }
